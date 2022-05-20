@@ -7,6 +7,7 @@ app = Flask(__name__)
 
 
 def get_secret(key):
+    # возвращает секретный токен
     dotenv_path = join(dirname(__file__), '.env')
     load_dotenv(dotenv_path)
     return os.environ.get(key)
@@ -14,6 +15,7 @@ def get_secret(key):
 
 @app.route('/')
 def hello_world():
+    # основная функция
     return 'Hello, World!'
 
 
