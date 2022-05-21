@@ -1,4 +1,5 @@
-from flask import Flask
+from flask import Flask, request
+import requests
 from dotenv import load_dotenv
 import os
 from os.path import join, dirname
@@ -13,10 +14,21 @@ def get_secret(key):
     return os.environ.get(key)
 
 
-@app.route('/')
-def hello_world():
+def send_message(chat_id, text):
+    method = "sendMessage"
+    token = get_secret("TELEGRAM_BOT_TOKEN")
+    url = f'https://api.telegram.org/bot{token}/{method}'
+    data = {"chat_id": chat_id, "text": text}
+    requests.post(url, data=data)
+
+
+@app.route('/', methods=["GET", "POST"])
+def main_app():
     # основная функция
-    return 'Hello, World!'
+    chat_id = request.json["message"]["chat"]["id"]
+    if request.method == "POST":
+        send_message(chat_id=chat_id, text="привет")
+    return {"ok": True}
 
 
 if __name__ == '__main__':
