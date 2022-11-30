@@ -8,9 +8,14 @@ bot = Bot(token=config.bot_token.get_secret_value())
 dp = Dispatcher(bot)
 
 
-@dp.message_handler(commands=['start', 'help'])
+@dp.message_handler(commands=['start'])
 async def send_welcome(message: types.Message):
     await message.reply('Привет')
+
+
+@dp.message_handler(commands=['help'])
+async def send_help(message: types.Message):
+    await message.reply('Ты думал что то здесь будет...')
 
 
 @dp.message_handler()
