@@ -1,27 +1,22 @@
-import logging
-from aiogram import Bot, Dispatcher, types, executor
+import asyncio
+from aiogram import Bot, Dispatcher
 
 from config_reader import config
-
-logging.basicConfig(level=logging.INFO)
-bot = Bot(token=config.bot_token.get_secret_value())
-dp = Dispatcher(bot)
+from handlers import start, help, echo
 
 
-@dp.message_handler(commands=['start'])
-async def send_welcome(message: types.Message):
-    await message.reply('Привет')
+# Запуск бота
+async def main():
+    bot = Bot(token=config.bot_token.get_secret_value())
+    dp = Dispatcher()
 
+    dp.include_router(start.router)
+    dp.include_router(help.router)
+    dp.include_router(echo.router)
 
-@dp.message_handler(commands=['help'])
-async def send_help(message: types.Message):
-    await message.reply('Ты думал что то здесь будет...')
-
-
-@dp.message_handler()
-async def echo(message: types.Message):
-    await message.answer(message.text)
+    await bot.delete_webhook(drop_pending_updates=True)
+    await dp.start_polling(bot)
 
 
 if __name__ == '__main__':
-    executor.start_polling(dp, skip_updates=True)
+    asyncio.run(main())
